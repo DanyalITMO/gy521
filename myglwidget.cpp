@@ -6,6 +6,7 @@
 #include "myglwidget.h"
 
 
+
 #define X_MAX_FIRST 0.2
 #define X_MIN_FIRST -0.2
 
@@ -29,114 +30,24 @@
 MyGLWidget::MyGLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    xRot1 = 0;
-    yRot1 = 0;
-    zRot1 = 0;
+    //    xRot1 = 0;
+    //    yRot1 = 0;
+    //    zRot1 = 0;
 
-    xRot2 = 0;
-    yRot2 = 0;
-    zRot2 = 0;
+    //    xRot2 = 0;
+    //    yRot2 = 0;
+    //    zRot2 = 0;
 }
 
 MyGLWidget::~MyGLWidget()
 {
 }
 
-QSize MyGLWidget::minimumSizeHint() const
-{
-    return QSize(50, 50);
-}
 
-QSize MyGLWidget::sizeHint() const
-{
-    return QSize(400, 400);
-}
-
-static void qNormalizeAngle(int &angle)
-{
-    while (angle < 0)
-        angle += 360 * 16;
-    while (angle > 360)
-        angle -= 360 * 16;
-}
-//1
-void MyGLWidget::setXRotation1(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != xRot1) {
-        xRot1 = angle;
-       // emit xRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void MyGLWidget::setYRotation1(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != yRot1) {
-        yRot1 = angle;
-       // emit yRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void MyGLWidget::setZRotation1(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != zRot1) {
-        zRot1 = angle;
-        //emit zRotationChanged(angle);
-        updateGL();
-    }
-}
-//2
-void MyGLWidget::setXRotation2(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != xRot2) {
-        xRot2 = angle;
-       // emit xRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void MyGLWidget::setYRotation2(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != yRot2) {
-        yRot2 = angle;
-       // emit yRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void MyGLWidget::setZRotation2(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != zRot2) {
-        zRot2 = angle;
-        //emit zRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void  MyGLWidget::accel1(int x, int y, int z)
-{
-    setXRotation1(x);
-    setYRotation1(y);
-    setYRotation1(z);
-}
-
-void  MyGLWidget::accel2(int x, int y, int z)
-{
-    setXRotation2(x);
-    setYRotation2(y);
-    setYRotation2(z);
-}
 void MyGLWidget::initializeGL()
 {
     qglClearColor(Qt::black);
-/*
+    /*
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glShadeModel(GL_SMOOTH);
@@ -153,17 +64,10 @@ void MyGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -10.0);
-
-    draw_first();
-
-
-
-    glLoadIdentity();
-
-    glTranslatef(0.0, 0.0, -10.0);
-
-
-   draw_second();
+/////////////////////////////////////////////////////////change this fragment
+//    draw();
+//    glLoadIdentity();
+//    glTranslatef(0.0, 0.0, -10.0);
 
 }
 
@@ -182,178 +86,107 @@ void MyGLWidget::resizeGL(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void MyGLWidget::mousePressEvent(QMouseEvent *event)
+
+void MyGLWidget::inputData(Acc* data)
 {
-    lastPos = event->pos();
-}
-
-void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    int dx = event->x() - lastPos.x();
-    int dy = event->y() - lastPos.y();
-int dz;
-    if (event->buttons() & Qt::LeftButton) {
-        setXRotation1(xRot1 + 8 * dy);
-        setYRotation1(yRot1 + 8 * dx);
-        //setZRotation1(zRot1 + 8 * dz);
-
-    } else if (event->buttons() & Qt::RightButton) {
-
-       setXRotation2(xRot2 + 8 * dy);
-        setYRotation2(yRot2 + 8 * dx);
-
-    //    setZRotation2(zRot2 + 8 * dz);
+    if(data->id == 0)
+    {
+        rotation[0].x_ = data->x;
+        rotation[0].y_ = data->y;
+        rotation[0].z_ = data->z;
     }
 
-    lastPos = event->pos();
+    else
+    {
+        rotation[1].x_ = data->x;
+        rotation[1].y_ = data->y;
+        rotation[1].z_ = data->z;
+    }
+
+    updateGL();
 }
 
-void MyGLWidget::draw_first()
+
+
+void MyGLWidget::draw(char id, double x_min, double x_max, double y_min, double y_max, double z_min, double z_max)
 {
-    glRotatef(xRot1 / 16.0, 1.0, 0.0, 0.0);
-    glRotatef(yRot1 / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(zRot1 / 16.0, 0.0, 0.0, 1.0);
-    qglColor(Qt::green);
+    if(id == 0)
+    {
+        glRotatef(rotation[0].x_ / 16.0, 1.0, 0.0, 0.0);
+        glRotatef(rotation[0].y_ / 16.0, 0.0, 1.0, 0.0);
+        glRotatef(rotation[0].z_ / 16.0, 0.0, 0.0, 1.0);
 
-//FRONT,
-glPolygonMode( GL_BACK, GL_LINE);
+    }
+
+    else
+    {
+        glRotatef(rotation[1].x_ / 16.0, 1.0, 0.0, 0.0);
+        glRotatef(rotation[1].y_ / 16.0, 0.0, 1.0, 0.0);
+        glRotatef(rotation[1].z_ / 16.0, 0.0, 0.0, 1.0);
+
+    }
+
+    glPolygonMode( GL_BACK, GL_LINE);
     glBegin(GL_QUADS);
-       glNormal3f(0,0,1);
-       glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST);
-       glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST);
-       glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST );
-       glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST );
-     glEnd();
+        glNormal3f(0,0,1);
+        glVertex3f( x_min,     y_min,    z_max);
+        glVertex3f( x_min,     y_max,    z_max);
+        glVertex3f( x_max,     y_max,    z_max );
+        glVertex3f( x_max,     y_min,    z_max );
+    glEnd();
 
 
-//BACK
-   //  glPolygonMode(GL_FRONT, GL_LINE);
+    //BACK
+    //  glPolygonMode(GL_FRONT, GL_LINE);
     glBegin(GL_QUADS);
-       glNormal3f(0,0,-1);
-       glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,     Z_MIN_FIRST);
-       glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,     Z_MIN_FIRST);
-       glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,     Z_MIN_FIRST);
-       glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,     Z_MIN_FIRST);
-     glEnd();
+        glNormal3f(0,0,-1);
+        glVertex3f( x_min,     y_min,     z_min);
+        glVertex3f( x_min,     y_max,     z_min);
+        glVertex3f( x_max,     y_max,     z_min);
+        glVertex3f( x_max,     y_min,     z_min);
+    glEnd();
 
-//TOP
-
+    //TOP
     glBegin(GL_QUADS);
-       glNormal3f(0,0,1);
-       glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,    Z_MIN_FIRST );
-       glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST );
-       glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST );
-       glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,    Z_MIN_FIRST );
+        glNormal3f(0,0,1);
+        glVertex3f( x_min,     y_max,    z_min );
+        glVertex3f( x_min,     y_max,    z_max );
+        glVertex3f( x_max,     y_max,    z_max );
+        glVertex3f( x_max,     y_max,    z_min );
+    glEnd();
+
+    //BELOW
+    glBegin(GL_QUADS);
+        glNormal3f(0,0,1);
+        glVertex3f( x_min,     y_min,    z_min );
+        glVertex3f( x_min,     y_min,    z_max );
+        glVertex3f( x_max,     y_min,    z_max );
+    glVertex3f( x_max,     y_min,    z_min );
 
     glEnd();
 
-//BELOW
+    //LEFT
 
     glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,    Z_MIN_FIRST );
-      glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,    Z_MIN_FIRST );
+        glNormal3f(0,0,1);
+        glVertex3f( x_min,     y_min,    z_min );
+        glVertex3f( x_min,     y_min,    z_max );
+        glVertex3f( x_min,     y_max,    z_max );
+    glVertex3f( x_min,     y_max,    z_min );
 
     glEnd();
 
-//LEFT
+    //RIGHT
 
     glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,    Z_MIN_FIRST );
-      glVertex3f( X_MIN_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MIN_FIRST,     Y_MAX_FIRST,    Z_MIN_FIRST );
-
+        glNormal3f(0,0,1);
+        glVertex3f( x_max,     y_min,    z_min );
+        glVertex3f( x_max,     y_min,    z_max );
+        glVertex3f( x_max,     y_max,    z_max );
+        glVertex3f( x_max,     y_max,    z_min );
     glEnd();
 
-//RIGHT
-
-    glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,    Z_MIN_FIRST );
-      glVertex3f( X_MAX_FIRST,     Y_MIN_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,    Z_MAX_FIRST );
-      glVertex3f( X_MAX_FIRST,     Y_MAX_FIRST,    Z_MIN_FIRST );
-glEnd();
-
-//
 }
 
-void MyGLWidget::draw_second()
-{
-    glRotatef(xRot2 / 16.0, 1.0, 0.0, 0.0);
-    glRotatef(yRot2 / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(zRot2 / 16.0, 0.0, 0.0, 1.0);
-    qglColor(Qt::green);
-
-//FRONT,
-glPolygonMode( GL_BACK, GL_LINE);
-    glBegin(GL_QUADS);
-       glNormal3f(0,0,1);
-       glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND);
-       glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND);
-       glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND );
-       glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND );
-     glEnd();
-
-
-//BACK
-   //  glPolygonMode(GL_FRONT, GL_LINE);
-    glBegin(GL_QUADS);
-       glNormal3f(0,0,-1);
-       glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,     Z_MIN_SECOND);
-       glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,     Z_MIN_SECOND);
-       glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,     Z_MIN_SECOND);
-       glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,     Z_MIN_SECOND);
-     glEnd();
-
-//TOP
-     //glPolygonMode(GL_FRONT, GL_LINE);
-    glBegin(GL_QUADS);
-       glNormal3f(0,0,1);
-       glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,    Z_MIN_SECOND);
-       glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND );
-       glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND );
-       glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,    Z_MIN_SECOND);
-
-    glEnd();
-
-//BELOW
-    //glPolygonMode(GL_FRONT, GL_LINE);
-    glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,    Z_MIN_SECOND );
-      glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,    Z_MIN_SECOND );
-
-    glEnd();
-
-//LEFT
-    //glPolygonMode(GL_FRONT, GL_LINE);
-    glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,    Z_MIN_SECOND );
-      glVertex3f( X_MIN_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MIN_SECOND,     Y_MAX_SECOND,    Z_MIN_SECOND );
-
-    glEnd();
-
-//RIGHT
-    //glPolygonMode(GL_FRONT, GL_LINE);
-    glBegin(GL_QUADS);
-      glNormal3f(0,0,1);
-      glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,    Z_MIN_SECOND );
-      glVertex3f( X_MAX_SECOND,     Y_MIN_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,    Z_MAX_SECOND );
-      glVertex3f( X_MAX_SECOND,     Y_MAX_SECOND,    Z_MIN_SECOND );
-glEnd();
-
-//glRotatef(10.0, 1.0f, 1.0f, 1.0f);
-}
 
 

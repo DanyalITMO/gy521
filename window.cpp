@@ -11,9 +11,6 @@ Window::Window(QWidget *parent) :
     ui(new Ui::Window)
 {
     ui->setupUi(this);
-
-    connect(ui->spinBox, SIGNAL(valueChanged(int)),  ui->myGLWidget, SLOT(setXRotation(int)));
-    connect(ui->myGLWidget, SIGNAL(xRotationChanged(int)),  ui->spinBox, SLOT(setValue(int)));
 }
 
 Window::~Window()

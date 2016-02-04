@@ -17,6 +17,7 @@ SOURCES += main.cpp\
     myglwidget.cpp
 
 HEADERS  += window.h \
-    myglwidget.h
+    myglwidget.h \
+    data.h
 
 FORMS    += window.ui

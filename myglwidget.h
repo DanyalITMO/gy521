@@ -1,9 +1,16 @@
-
-
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
 
 #include <QGLWidget>
+
+#include "data.h"
+
+struct Angle
+{
+    double x_;
+    double y_;
+    double z_;
+};
 
 class MyGLWidget : public QGLWidget
 {
@@ -20,44 +27,20 @@ protected:
     void paintGL();
     void resizeGL(int width, int height);
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-
 public slots:
-    // slots for xyz-rotation slider
-    void setXRotation1(int angle);
-    void setYRotation1(int angle);
-    void setZRotation1(int angle);
 
-    void setXRotation2(int angle);
-    void setYRotation2(int angle);
-    void setZRotation2(int angle);
+    void inputData(Acc*);
 
-    void accel1(int x, int y, int z);
-    void accel2(int x, int y, int z);
-
-signals:
-    // signaling rotation from mouse movement
-    void xRotationChanged(int angle);
-    void yRotationChanged(int angle);
-    void zRotationChanged(int angle);
+//signals:
 
 private:
-    void draw_first();
-    void draw_second();
+    void draw();
 
+    void draw(char , double , double , double , double , double , double );
+    //(char id, double x_min, double x_max, double y_min, double y_max, double z_min, double z_max,)
+    Angle rotation[2];
 
-    int xRot1;
-    int yRot1;
-    int zRot1;
-
-    int xRot2;
-    int yRot2;
-    int zRot2;
-
-    QPoint lastPos;
+  //  QPoint lastPos;
 };
 
 #endif // MYGLWIDGET_H
