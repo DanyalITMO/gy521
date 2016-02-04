@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Window</class>
+ <widget class="QWidget" name="Window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>291</width>
+    <height>345</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Window</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="MyGLWidget" name="myGLWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>200</height>
+      </size>
+     </property>
+     <widget class="QSpinBox" name="spinBox">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>270</y>
+        <width>42</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MyGLWidget</class>
+   <extends>QWidget</extends>
+   <header>myglwidget.h</header>
+   <container>1</container>
+   <slots>
+    <slot>setXRotation(int)</slot>
+    <slot>setZRotation(int)</slot>
+    <slot>setYRotation(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
